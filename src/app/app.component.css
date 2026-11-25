@@ -1,0 +1,303 @@
+main {
+  max-width: 1500px;
+  margin: auto;
+  padding: 2rem clamp(1rem, 3.7vw, 4rem) 3rem;
+}
+.simbolos {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+.cabecera,
+.identidad,
+.conexiones,
+.conexiones span,
+.sensor-top,
+.detalle,
+.pie,
+.botones {
+  display: flex;
+  align-items: center;
+}
+.cabecera {
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.4rem;
+}
+.identidad {
+  gap: 1rem;
+}
+.marca,
+.chip-icon {
+  display: grid;
+  place-items: center;
+}
+.marca {
+  width: 3.4rem;
+  height: 3.4rem;
+  border: 1px solid #49726d;
+  border-radius: 12px;
+  color: var(--mint);
+  background: repeating-linear-gradient(0deg, transparent 0 5px, #82dfc809 6px), #172c32;
+}
+.marca svg {
+  width: 34px;
+  height: 34px;
+}
+.modelo {
+  font: 0.76rem var(--mono);
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+.identidad .modelo {
+  color: var(--mint);
+  margin-bottom: 0.2rem;
+}
+h1 {
+  font-size: clamp(1.65rem, 3vw, 2.65rem);
+  line-height: 1.1;
+  font-weight: 620;
+  letter-spacing: -0.05em;
+}
+.conexiones {
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+.conexiones span {
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.conexiones b {
+  color: var(--text);
+  font-weight: 550;
+}
+.led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #a98878;
+}
+.led.ok {
+  background: var(--mint);
+  box-shadow: 0 0 7px #86ddcb66;
+}
+.controles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem 1.5rem;
+  padding: 1rem 1.2rem;
+}
+.puertos {
+  padding-right: 1.5rem;
+  border-right: 1px solid var(--line);
+}
+.controles label,
+.remoto h2 {
+  display: block;
+  margin-bottom: 0.55rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+.botones {
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+kbd {
+  font: 0.74rem var(--mono);
+  color: var(--mint);
+}
+.enviado {
+  border-color: var(--mint);
+  color: var(--mint);
+}
+.notas {
+  flex-basis: 100%;
+  display: grid;
+}
+.titulo-seccion {
+  flex-wrap: wrap;
+  margin: 1.55rem 0 0.85rem;
+}
+.instrumentos {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+.instrumento {
+  --tinta: #efae80;
+  padding: 1rem 1.15rem 0.85rem;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--tinta) 5%, transparent), transparent 70%),
+    var(--panel);
+}
+.luz {
+  --tinta: #efd078;
+}
+.gas {
+  --tinta: #8bd6b9;
+}
+.agua {
+  --tinta: #7bbfed;
+}
+.sensor-top,
+.detalle,
+.pie {
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+.chip-icon {
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--tinta) 11%, transparent);
+  color: var(--tinta);
+}
+.chip-icon svg {
+  width: 24px;
+  height: 24px;
+}
+.instrumento h3 {
+  font-size: 1.05rem;
+  font-weight: 570;
+  margin: 0.85rem 0 0.25rem;
+}
+.valor {
+  font: 500 clamp(2rem, 3.5vw, 3.3rem)/1.15 var(--mono);
+  letter-spacing: -0.07em;
+  margin-bottom: 0.65rem;
+}
+.valor small {
+  color: var(--tinta);
+  font-size: 0.43em;
+  letter-spacing: normal;
+}
+.detalle,
+.pie {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.detalle {
+  min-height: 1.5rem;
+}
+.detalle b,
+.pie b {
+  font: 0.8rem var(--mono);
+  color: var(--text);
+}
+.badge {
+  background: color-mix(in srgb, var(--tinta) 13%, transparent);
+  padding: 0.15rem 0.48rem;
+  border-radius: 4px;
+  color: var(--tinta) !important;
+}
+.badge.bajo {
+  background: #223143;
+}
+.badge.tenue {
+  opacity: 0.78;
+}
+.barra {
+  display: flex;
+  height: 4px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: #304056;
+  margin: 0.5rem 0 0.85rem;
+}
+.barra i {
+  background: var(--tinta);
+  max-width: 100%;
+}
+.critico {
+  border-color: #e78279;
+}
+.critico .badge {
+  background: #572d35;
+  color: #ffb1a6 !important;
+}
+.alerta {
+  padding: 0.9rem 1.1rem;
+  margin-top: 0.9rem;
+  border: 1px solid #d87471;
+  background: #472631;
+  border-radius: 8px;
+  color: #ffd3cc;
+  animation: pulso 2s infinite;
+}
+.alerta strong {
+  margin-right: 0.65rem;
+}
+@keyframes pulso {
+  50% {
+    border-color: #ffa59e;
+    box-shadow: 0 0 0 2px #d8747130;
+  }
+}
+.analisis {
+  display: grid;
+  grid-template-columns: 1.65fr 1fr;
+  gap: 0.9rem;
+  margin: 1rem 0;
+}
+.analitico,
+.resumen,
+.historial {
+  padding: 1.15rem;
+  min-width: 0;
+}
+.titulo-panel {
+  margin-bottom: 1rem;
+}
+@media (max-width: 1050px) {
+  .puertos {
+    border: 0;
+    padding: 0;
+  }
+  .instrumentos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 760px) {
+  .analisis {
+    grid-template-columns: 1fr;
+  }
+  .conexiones {
+    row-gap: 0.3rem;
+  }
+}
+@media (max-width: 480px) {
+  main {
+    padding: 1rem 0.8rem 2rem;
+  }
+  .controles,
+  .instrumento,
+  .resumen,
+  .analitico,
+  .historial {
+    padding: 0.85rem;
+  }
+  .instrumentos {
+    gap: 0.5rem;
+  }
+  .marca {
+    display: none;
+  }
+  .valor {
+    font-size: 2.1rem;
+  }
+  .pie {
+    align-items: start;
+    flex-direction: column;
+  }
+  .sensor-top .modelo {
+    font-size: 0.69rem;
+  }
+}
+@media (max-width: 340px) {
+  .instrumentos {
+    grid-template-columns: 1fr;
+  }
+}

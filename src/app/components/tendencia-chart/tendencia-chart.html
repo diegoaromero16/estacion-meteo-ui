@@ -1,0 +1,78 @@
+<div class="leyenda">
+  <span><i></i>Temperatura (°C)</span><span><i></i>Humedad (%)</span>
+</div>
+<div class="grafico">
+  <div class="eje" aria-hidden="true">
+    @for (n of niveles(); track n.y) {
+      <span>{{ n.temp }}°</span>
+    }
+  </div>
+  <div class="centro">
+    <svg
+      viewBox="0 0 100 100"
+      preserveAspectRatio="none"
+      role="group"
+      aria-label="Temperatura y humedad de las últimas lecturas"
+      (pointerleave)="foco.set(null)"
+    >
+      <defs>
+        <linearGradient
+          id="relleno-temperatura"
+          x1="0"
+          y1="0"
+          x2="0"
+          y2="1"
+          gradientUnits="objectBoundingBox"
+        >
+          <stop offset="0" stop-color="#edaf79" stop-opacity=".28" />
+          <stop offset="1" stop-color="#edaf79" stop-opacity=".01" />
+        </linearGradient>
+      </defs>
+      @for (n of niveles(); track n.y) {
+        <line x1="0" x2="100" [attr.y1]="n.y" [attr.y2]="n.y" class="grilla" />
+      }
+      <polygon [attr.points]="area()" fill="url(#relleno-temperatura)" />
+      <polyline [attr.points]="temp()" class="temperatura" />
+      <polyline [attr.points]="hum()" class="humedad" />
+      @for (p of puntos(); track p.clave) {
+        <rect
+          [attr.x]="p.x - 50 / puntos().length"
+          y="0"
+          [attr.width]="100 / (puntos().length - 1 || 1) + 0.1"
+          height="100"
+          fill="transparent"
+          tabindex="0"
+          [attr.aria-label]="p.hora + ', ' + p.valor + ' grados, humedad ' + p.humedad + '%'"
+          (pointerenter)="foco.set(p.clave)"
+          (focus)="foco.set(p.clave)"
+          (blur)="foco.set(null)"
+        />
+      }
+    </svg>
+    @if (activo() || puntos().length === 1) {
+      @let p = activo() ?? puntos()[0];
+      <i class="punto calido" [style.left.%]="p.x" [style.top.%]="p.t"></i>
+      <i class="punto frio" [style.left.%]="p.x" [style.top.%]="p.h"></i>
+    }
+    @if (activo(); as p) {
+      <div class="tooltip" [style.left.%]="p.x" [class.izquierda]="p.x > 50">
+        {{ p.hora }}<br />{{ p.valor }} °C · {{ p.humedad }} %
+      </div>
+    }
+    @if (!puntos().length) {
+      <span class="vacio">Esperando lecturas</span>
+    }
+    <div class="horas">
+      @for (p of etiquetas(); track p.clave) {
+        <span [style.left.%]="p.x" [class.primera]="p.x === 0" [class.ultima]="p.x === 100">{{
+          p.hora
+        }}</span>
+      }
+    </div>
+  </div>
+  <div class="eje derecho" aria-hidden="true">
+    @for (n of niveles(); track n.y) {
+      <span>{{ n.humedad }}%</span>
+    }
+  </div>
+</div>

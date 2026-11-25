@@ -1,0 +1,351 @@
+<svg class="simbolos" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <symbol id="estacion" viewBox="0 0 24 24">
+      <path d="m4 20 8-17 8 17M7 14h10M5.5 17h13M12 3v17M2 20h20" />
+      <circle cx="12" cy="7" r="2" />
+    </symbol>
+    <symbol id="temperatura" viewBox="0 0 24 24">
+      <path d="M9 14.7V5a3 3 0 0 1 6 0v9.7a5 5 0 1 1-6 0ZM12 8v10M18 6h3m-3 4h2" />
+      <circle cx="12" cy="18" r="1.4" />
+    </symbol>
+    <symbol id="sol" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2" />
+    </symbol>
+    <symbol id="aire" viewBox="0 0 24 24">
+      <path d="M2 8h11a3 3 0 1 0-3-3M3 12h15a3 3 0 1 0-3-3M5 16h8a3 3 0 1 1-3 3" />
+    </symbol>
+    <symbol id="gota" viewBox="0 0 24 24">
+      <path d="M12 2c-1.8 3.7-7 8.4-7 13a7 7 0 0 0 14 0c0-4.6-5.2-9.3-7-13Z" />
+      <path d="M8.5 15.5a3.5 3.5 0 0 0 3.5 3.5" />
+    </symbol>
+    <symbol id="lampara" viewBox="0 0 24 24">
+      <path d="M9 17c0-3-4-4-4-8a7 7 0 0 1 14 0c0 4-4 5-4 8Zm1 3h4m-3 2h2" />
+    </symbol>
+    <symbol id="siguiente" viewBox="0 0 24 24"><path d="m5 5 10 7-10 7Zm13 0v14" /></symbol>
+    <symbol id="refrescar" viewBox="0 0 24 24">
+      <path d="M20 6v5h-5M4 18v-5h5M5 9a7.5 7.5 0 0 1 12-4l3 3M4 16l3 3a7.5 7.5 0 0 0 12-4" />
+    </symbol>
+    <symbol id="pulso" viewBox="0 0 24 24"><path d="M2 13h5l3-8 4 14 3-8 2 2h3" /></symbol>
+  </defs>
+</svg>
+<main>
+  <header class="cabecera">
+    <div class="identidad">
+      <div class="marca">
+        <svg aria-hidden="true"><use href="#estacion" /></svg>
+      </div>
+      <div>
+        <p class="modelo">ARDUINO MEGA 2560</p>
+        <h1>Estación meteorológica</h1>
+      </div>
+    </div>
+    <div class="conexiones" aria-live="polite">
+      <span
+        ><i class="led" [class.ok]="meteo.signalrConectado()"></i> SignalR
+        <b>{{ meteo.signalrConectado() ? 'En línea' : 'Sin conexión' }}</b></span
+      >
+      <span
+        ><i class="led" [class.ok]="meteo.estadoArduino()?.conectado"></i> Serie
+        <b
+          >{{ puertoActivo() || '—' }} ·
+          {{ meteo.estadoArduino()?.conectado ? 'Conectado' : 'Sin conexión' }}</b
+        ></span
+      >
+    </div>
+  </header>
+
+  <section class="panel controles" aria-label="Control de la estación">
+    <div class="puertos">
+      <label for="puerto">Puerto serie</label>
+      <div class="botones">
+        <select id="puerto" #puerto [value]="seleccion()" (change)="seleccion.set(puerto.value)">
+          @if (!opciones().length) {
+            <option value="">Sin puertos</option>
+          }
+          @for (p of opciones(); track p) {
+            <option [value]="p" [selected]="p === seleccion()">{{ p }}</option>
+          }
+        </select>
+        <button
+          class="cuadrado"
+          aria-label="Actualizar lista de puertos"
+          title="Actualizar puertos"
+          [disabled]="meteo.cargandoPuertos()"
+          (click)="meteo.refrescarPuertos()"
+        >
+          <svg><use href="#refrescar" /></svg>
+        </button>
+        <button
+          class="primario"
+          [disabled]="!seleccion() || meteo.cambiandoPuerto()"
+          (click)="meteo.cambiarPuerto(seleccion())"
+        >
+          {{ meteo.cambiandoPuerto() ? 'Conectando…' : 'Conectar' }}
+        </button>
+      </div>
+    </div>
+    <div class="remoto">
+      <h2>Control remoto</h2>
+      <div class="botones">
+        @for (c of comandos; track c.cmd) {
+          <button
+            [disabled]="!meteo.puedeEnviar()"
+            (click)="meteo.enviarComando(c.cmd)"
+            [class.enviado]="meteo.ultimoComandoEnviado() === c.cmd"
+          >
+            @if (c.icono) {
+              <svg aria-hidden="true"><use [attr.href]="'#' + c.icono" /></svg>
+            } @else {
+              <kbd>{{ c.cmd }}</kbd>
+            }
+            {{ c.texto }}
+          </button>
+        }
+      </div>
+    </div>
+    @if (
+      meteo.errorPuertos() ||
+      meteo.estadoArduino()?.mensajeError ||
+      meteo.errorComando() ||
+      meteo.ultimoComandoEnviado()
+    ) {
+      <div class="notas" role="status">
+        @if (meteo.errorPuertos()) {
+          <span>{{ meteo.errorPuertos() }}</span>
+        }
+        @if (meteo.estadoArduino()?.mensajeError; as error) {
+          <span>{{ puertoActivo() }} · {{ error }}</span>
+        }
+        @if (meteo.errorComando()) {
+          <span>{{ meteo.errorComando() }}</span>
+        }
+        @if (meteo.ultimoComandoEnviado(); as cmd) {
+          <span>Comando {{ cmd }} enviado.</span>
+        }
+      </div>
+    }
+  </section>
+
+  @let lectura = meteo.lecturaActual();
+  @if (lectura?.alertaGas || lectura?.alertaAgua) {
+    <div class="alerta" role="alert">
+      <strong>Alerta crítica</strong>
+      {{
+        lectura?.alertaGas && lectura?.alertaAgua
+          ? 'Gas y agua detectados'
+          : lectura?.alertaGas
+            ? 'Gas detectado'
+            : 'Agua detectada'
+      }}
+      · {{ lectura?.fechaHora | date: 'HH:mm:ss' }}
+    </div>
+  }
+
+  <div class="titulo-seccion">
+    <h2>Instrumentos</h2>
+    <span
+      >Última lectura <b>{{ (lectura?.fechaHora | date: 'HH:mm:ss') || '—' }}</b></span
+    >
+    <div class="botones">
+      <button
+        type="button"
+        [disabled]="!meteo.puedeEnviar() || meteo.actualizando()"
+        [attr.aria-busy]="meteo.actualizando()"
+        (click)="meteo.actualizarAhora()"
+      >
+        <span aria-hidden="true">🔄</span
+        >{{ meteo.actualizando() ? 'Esperando lectura…' : 'Actualizar ahora' }}
+      </button>
+      <button
+        type="button"
+        class="primario"
+        [disabled]="!lectura || meteo.guardando()"
+        [attr.aria-busy]="meteo.guardando()"
+        (click)="meteo.guardarMedicion()"
+      >
+        <span aria-hidden="true">💾</span
+        >{{ meteo.guardando() ? 'Guardando…' : 'Guardar medición' }}
+      </button>
+    </div>
+  </div>
+  <div class="respuesta" role="status">
+    @if (meteo.avisoActualizacion()) {
+      <p>{{ meteo.avisoActualizacion() }}</p>
+    }
+    @if (meteo.avisoGuardado()) {
+      <p>{{ meteo.avisoGuardado() }}</p>
+    }
+  </div>
+  <section class="instrumentos" aria-label="Instrumentos">
+    <article class="panel instrumento atmosfera">
+      <div class="sensor-top">
+        <span class="chip-icon"
+          ><svg><use href="#temperatura" /></svg></span
+        ><span class="modelo">DHT11</span>
+      </div>
+      <h3>Atmósfera</h3>
+      <div class="valor">{{ (lectura?.temp | number: '1.1-1') ?? '—' }} <small>°C</small></div>
+      <div class="detalle">
+        <span>Humedad</span><b>{{ lectura?.humedad ?? '—' }} %</b>
+      </div>
+      <div class="barra"><i [style.width.%]="lectura?.humedad ?? 0"></i></div>
+      <div class="pie">
+        <span>Punto de rocío</span><b>{{ (puntoRocio() | number: '1.1-1') ?? '—' }} °C</b>
+      </div>
+    </article>
+    @for (s of instrumentos(); track s.modelo) {
+      <article class="panel instrumento {{ s.tema }}" [class.critico]="s.alerta">
+        <div class="sensor-top">
+          <span class="chip-icon"
+            ><svg><use [attr.href]="'#' + s.icono" /></svg></span
+          ><span class="modelo">{{ s.modelo }}</span>
+        </div>
+        <h3>{{ s.nombre }}</h3>
+        <div class="valor">{{ s.valor ?? '—' }} <small>%</small></div>
+        <div class="detalle">
+          <span>Estado</span
+          ><b
+            class="badge"
+            [class.bajo]="['oscuro', 'seco', 'normal'].includes(s.estado?.toLowerCase() ?? '')"
+            [class.tenue]="s.estado?.toLowerCase() === 'tenue'"
+            >{{ s.estado || '—' }}</b
+          >
+        </div>
+        <div class="barra"><i [style.width.%]="s.valor ?? 0"></i></div>
+        <div class="pie">
+          <span>Señal RAW</span><b>{{ s.raw ?? '—' }} / 1023</b>
+        </div>
+      </article>
+    }
+  </section>
+
+  <section class="analisis" aria-label="Análisis de lecturas">
+    <article class="panel analitico">
+      <div class="titulo-panel">
+        <div class="titulo-icon">
+          <svg><use href="#pulso" /></svg>
+          <h2>Tendencia</h2>
+        </div>
+        <span>Últimas 30 lecturas en vivo</span>
+      </div>
+      <app-tendencia-chart [lecturas]="meteo.historialEnVivo()" />
+    </article>
+    <article class="panel resumen">
+      <div class="titulo-panel">
+        <h2>Resumen de mediciones guardadas</h2>
+        <button
+          class="cuadrado"
+          aria-label="Actualizar estadísticas"
+          (click)="meteo.refrescarEstadisticas()"
+        >
+          <svg><use href="#refrescar" /></svg>
+        </button>
+      </div>
+      @let est = meteo.estadisticas();
+      <table class="stats">
+        <thead>
+          <tr>
+            <th scope="col">Variable</th>
+            <th scope="col">Mín.</th>
+            <th scope="col">Máx.</th>
+            <th scope="col">Prom.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Temp. <small>°C</small></th>
+            <td>{{ (est?.tempMinima | number: '1.1-1') ?? '—' }}</td>
+            <td>{{ (est?.tempMaxima | number: '1.1-1') ?? '—' }}</td>
+            <td>{{ (est?.tempPromedio | number: '1.1-1') ?? '—' }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Humedad <small>%</small></th>
+            <td>{{ est?.humedadMinima ?? '—' }}</td>
+            <td>{{ est?.humedadMaxima ?? '—' }}</td>
+            <td>{{ (est?.humedadPromedio | number: '1.1-1') ?? '—' }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="totales">
+        <div>
+          <span>Alertas de gas</span><b>{{ est?.totalAlertasGas ?? '—' }}</b>
+        </div>
+        <div>
+          <span>Alertas de agua</span><b>{{ est?.totalAlertasAgua ?? '—' }}</b>
+        </div>
+      </div>
+      @if (meteo.errorEstadisticas()) {
+        <p class="error">{{ meteo.errorEstadisticas() }}</p>
+      }
+    </article>
+  </section>
+  <section class="panel historial" aria-labelledby="guardadas">
+    <div class="titulo-panel">
+      <h2 id="guardadas">Mediciones guardadas en SQL Server</h2>
+      <span>{{ meteo.registrosGuardados().length }} registros</span>
+    </div>
+    @if (meteo.errorRegistros()) {
+      <p class="error">
+        {{ meteo.errorRegistros() }}
+        <button type="button" (click)="meteo.cargarGuardadas()">Reintentar</button>
+      </p>
+    }
+    <div class="scroll" [attr.aria-busy]="meteo.cargandoRegistros()">
+      <table aria-labelledby="guardadas">
+        <thead>
+          <tr>
+            <th scope="col">Fecha y hora de guardado</th>
+            <th scope="col">Temperatura</th>
+            <th scope="col">Humedad</th>
+            <th scope="col">Luz</th>
+            <th scope="col">Gas</th>
+            <th scope="col">Agua</th>
+            <th scope="col">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of meteo.registrosGuardados(); track r.id) {
+            <tr>
+              <td>
+                <time [attr.datetime]="r.fechaHora">{{
+                  r.fechaHora | date: 'dd/MM/yyyy HH:mm:ss'
+                }}</time>
+              </td>
+              <td>{{ r.temp | number: '1.1-1' }} °C</td>
+              <td>{{ r.humedad }} %</td>
+              <td>{{ r.luzPct }} % · {{ r.luzEstado }}</td>
+              <td [class.peligro]="r.alertaGas">{{ r.gasPct }} % · {{ r.gasEstado }}</td>
+              <td [class.peligro]="r.alertaAgua">{{ r.aguaPct }} % · {{ r.aguaEstado }}</td>
+              <td>
+                @if (r.id !== undefined) {
+                  <button
+                    type="button"
+                    [disabled]="meteo.eliminandoId() !== null"
+                    [attr.aria-label]="'Eliminar medición #' + r.id"
+                    (click)="meteo.eliminarRegistro(r.id)"
+                  >
+                    {{ meteo.eliminandoId() === r.id ? 'Eliminando…' : 'Eliminar' }}
+                  </button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            @if (!meteo.errorRegistros()) {
+              <tr>
+                <td class="sin-datos" colspan="7">
+                  {{
+                    meteo.cargandoRegistros()
+                      ? 'Cargando mediciones…'
+                      : 'Todavía no hay mediciones guardadas.'
+                  }}
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+    <p role="status" class="respuesta">{{ meteo.avisoEliminacion() }}</p>
+  </section>
+</main>

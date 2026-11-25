@@ -1,0 +1,128 @@
+:host {
+  display: block;
+}
+.leyenda,
+.leyenda span {
+  display: flex;
+  align-items: center;
+}
+.leyenda {
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+.leyenda i {
+  width: 22px;
+  border-top: 2px solid #edaf79;
+  margin-right: 7px;
+}
+.leyenda span + span i {
+  border-top: 2px dashed #75c4ed;
+}
+.grafico {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr) 2.6rem;
+  margin-bottom: 1.5rem;
+}
+.centro {
+  position: relative;
+  height: 168px;
+}
+.centro svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.centro svg * {
+  vector-effect: non-scaling-stroke;
+}
+.grilla {
+  stroke: #314156;
+  stroke-dasharray: 3 5;
+}
+.temperatura,
+.humedad {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+.temperatura {
+  stroke: #edaf79;
+}
+.humedad {
+  stroke: #75c4ed;
+  stroke-dasharray: 6 4;
+}
+.eje {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font: 0.75rem var(--mono);
+  color: var(--muted);
+  margin-block: -0.45rem;
+}
+.derecho {
+  text-align: right;
+}
+.horas {
+  position: absolute;
+  inset: 100% 0 auto;
+  height: 20px;
+}
+.horas span {
+  position: absolute;
+  top: 8px;
+  transform: translateX(-50%);
+  color: var(--muted);
+  font: 0.75rem var(--mono);
+}
+.horas .primera {
+  transform: none;
+}
+.horas .ultima {
+  transform: translateX(-100%);
+}
+.vacio,
+.tooltip {
+  position: absolute;
+  background: #152136;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 0.82rem;
+  padding: 0.4rem 0.65rem;
+  pointer-events: none;
+}
+.vacio {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}
+.tooltip {
+  top: 0;
+  white-space: nowrap;
+  color: var(--text);
+  font-family: var(--mono);
+  z-index: 1;
+}
+.izquierda {
+  transform: translateX(-100%);
+}
+.punto {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.calido {
+  background: #edaf79;
+}
+.frio {
+  background: #75c4ed;
+}
